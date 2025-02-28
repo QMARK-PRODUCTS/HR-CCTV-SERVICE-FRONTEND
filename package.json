@@ -12,6 +12,7 @@
     "@mui/x-date-pickers": "^7.25.0",
     "@mui/x-tree-view": "^7.25.0",
     "@react-spring/web": "^9.7.5",
+    "axios": "^1.8.1",
     "cra-template": "1.2.0",
     "dayjs": "^1.11.13",
     "hls.js": "^1.0.3-0.canary.7275",
@@ -19,7 +20,8 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.5.0",
     "react-player": "^2.16.0",
-    "react-router-dom": "^7.1.5"
+    "react-router-dom": "^7.1.5",
+    "react-toastify": "^11.0.5"
   },
   "scripts": {
     "dev": "vite",

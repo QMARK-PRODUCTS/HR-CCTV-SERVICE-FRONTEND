@@ -9,10 +9,13 @@ import {
   IconButton,
 } from "@mui/material";
 import { FaPlus, FaTrash } from "react-icons/fa";
+import axios from "../axios/axios";
+import { toast } from "react-toastify";
 
 const UserModelModal = ({ open, handleClose }) => {
   const [role, setRole] = useState("Student");
   const [otherDetails, setOtherDetails] = useState([{ key: "", value: "" }]);
+  const [loading, setLoading] = useState(false);
 
   // Handle role selection
   const handleRoleChange = (event) => {
@@ -38,7 +41,7 @@ const UserModelModal = ({ open, handleClose }) => {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const userData = {
       role,
       otherDetails: Object.fromEntries(
@@ -46,11 +49,29 @@ const UserModelModal = ({ open, handleClose }) => {
       ),
     };
     console.log("User Data:", userData);
-    // Reset form after submission
-    setRole("Student");
-    setOtherDetails([{ key: "", value: "" }]);
-
-    handleClose();
+    try {
+        setLoading(true);
+        const response = await axios.post("/api/v1/users/model", userData);
+        console.log("Response:", response);
+        if (response.status === 200 || response.status === 201) {
+            // Show success message
+            toast.success("User data submitted successfully!");
+    
+            // Reset form only after successful submission
+            setRole("Student");
+            setOtherDetails([{ key: "", value: "" }]);
+            handleClose();  
+        } 
+        else {
+            toast.error("Failed to submit user data!");
+          }
+    } catch (error) {
+        toast.error("Error submitting user data:", error);
+    }finally {
+        setLoading(false);
+      }
+  
+   
   };
 
   return (
@@ -135,8 +156,9 @@ const UserModelModal = ({ open, handleClose }) => {
            
             display: "block",
           }}
+          disabled={loading}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </Button>
       </Box>
     </Modal>
