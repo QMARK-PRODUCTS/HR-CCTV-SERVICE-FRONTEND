@@ -19,6 +19,7 @@ import {
   datePickersCustomizations,
   treeViewCustomizations,
 } from './theme/customizations';
+import UsersPage from '../../pages/UsersPage';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -71,6 +72,7 @@ export default function Dashboard(props) {
 
             {location.pathname === '/dashboard/home' && <MainGrid />}
             {location.pathname === '/dashboard/cameras' && <CameraGrid cameras={cameras} />}
+            {location.pathname === '/dashboard/Users' && <UsersPage  />}
             {location.pathname === '/dashboard/settings' && <Settings />}
             {location.pathname === '/dashboard/about' && <About />}
             {location.pathname === '/dashboard/feedback' && <Feedback />}
