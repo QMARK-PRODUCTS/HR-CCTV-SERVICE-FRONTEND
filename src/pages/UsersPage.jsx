@@ -13,7 +13,7 @@ const UsersPage = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [createModalOpen, setcreateModalOpen] = useState(false);
   return (
-    <Box >
+    <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
         <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         User Details
       </Typography>
