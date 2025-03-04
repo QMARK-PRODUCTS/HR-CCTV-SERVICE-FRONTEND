@@ -1,7 +1,6 @@
 import React from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import { Usercolumns, Userrows } from '../dashboard/internals/data/gridData';
-
 const UserCustomizedDataGrid = () => {
   return (
        <DataGrid

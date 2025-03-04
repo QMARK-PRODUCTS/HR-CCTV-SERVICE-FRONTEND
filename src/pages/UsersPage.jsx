@@ -1,16 +1,19 @@
-import * as React from 'react';
+
+import { useState } from 'react';
 import { Button, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import UserCustomizedDataGrid from '../components/Users/userCustomizedDataGrid';
-import UserModelModal from './UserModelModal';
+import UserModelModal from '../components/Users/UserModelModal';
+import CreateUserModal from '../components/Users/CreateUserModal';
 
 
 
 const UsersPage = () => {
-    const [modalOpen, setModalOpen] = React.useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [createModalOpen, setcreateModalOpen] = useState(false);
   return (
-    <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
+    <Box >
         <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         User Details
       </Typography>
@@ -21,7 +24,11 @@ const UsersPage = () => {
          sx={{ fontWeight: 600 }} 
          onClick={() => setModalOpen(true)}
         >User Model</Button>
-        <Button variant="contained" sx={{ fontWeight: 600 }}>Add User</Button>
+        <Button
+         variant="contained" 
+         sx={{ fontWeight: 600 }}
+         onClick={() => setcreateModalOpen(true)}
+         >Add User</Button>
       </Box>
       <Grid  spacing={2} columns={12}>
         <Grid size={{ xs: 12, lg: 9 }}>
@@ -30,6 +37,7 @@ const UsersPage = () => {
         </Grid>
            {/* User Modal */}
       <UserModelModal open={modalOpen} handleClose={() => setModalOpen(false)} />
+        <CreateUserModal open={createModalOpen} handleClose={() => setcreateModalOpen(false)}/>
         </Box>
   )
 }

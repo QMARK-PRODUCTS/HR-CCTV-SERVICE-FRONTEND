@@ -9,12 +9,16 @@ import {
   IconButton,
 } from "@mui/material";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import axios from "../axios/axios";
+import axios from "../../axios/axios";
 import { toast } from "react-toastify";
 
 const UserModelModal = ({ open, handleClose }) => {
   const [role, setRole] = useState("Student");
-  const [otherDetails, setOtherDetails] = useState([{ key: "", value: "" }]);
+  const [otherDetails, setOtherDetails] = useState([
+    { key: "", value: "String" },
+  ]);
+  // Default type is "String"
+
   const [loading, setLoading] = useState(false);
 
   // Handle role selection
@@ -25,64 +29,87 @@ const UserModelModal = ({ open, handleClose }) => {
   // Handle input change in otherDetails
   const handleDetailChange = (index, field, value) => {
     const updatedDetails = [...otherDetails];
-    updatedDetails[index][field] = value;
+  
+    if (field === "value") {
+      // Convert "Number" to actual Number type
+      if (value === "Number") {
+        updatedDetails[index][field] = 0; // Default number value
+      } 
+      // Convert "Array" to an actual array
+      else if (value === "Array") {
+        updatedDetails[index][field] = []; // Default empty array
+      } 
+      // Keep "String" as is
+      else {
+        updatedDetails[index][field] = "String"; // Default string value
+      }
+    } else {
+      updatedDetails[index][field] = value; // Set the key name normally
+    }
+  
     setOtherDetails(updatedDetails);
   };
+  
 
-  // Add new key-value pair
-  const addDetailField = () => {
-    setOtherDetails([...otherDetails, { key: "", value: "" }]);
-  };
+// Add a new key-value pair
+const addDetailField = () => {
+  setOtherDetails([...otherDetails, { key: "", value: "String" }]);
+};
 
-  // Remove key-value pair
-  const removeDetailField = (index) => {
-    const updatedDetails = otherDetails.filter((_, i) => i !== index);
-    setOtherDetails(updatedDetails);
-  };
+// Remove a key-value pair
+const removeDetailField = (index) => {
+  setOtherDetails(otherDetails.filter((_, i) => i !== index));
+};
+
 
   // Handle form submission
   const handleSubmit = async () => {
+    const formattedDetails = {};
+
+    otherDetails.forEach(({ key, value }) => {
+      if (key.trim()) formattedDetails[key] = value;
+    });
+  
     const userData = {
       role,
-      otherDetails: Object.fromEntries(
-        otherDetails.map(({ key, value }) => [key, value])
-      ),
+      otherDetails: formattedDetails,
     };
-    console.log("User Data:", userData);
-    try {
-        setLoading(true);
-        const response = await axios.post("/api/v1/users/model", userData);
-        console.log("Response:", response);
-        if (response.status === 200 || response.status === 201) {
-            // Show success message
-            toast.success("User data submitted successfully!");
-    
-            // Reset form only after successful submission
-            setRole("Student");
-            setOtherDetails([{ key: "", value: "" }]);
-            handleClose();  
-        } 
-        else {
-            toast.error("Failed to submit user data!");
-          }
-    } catch (error) {
-        toast.error("Error submitting user data:", error);
-    }finally {
-        setLoading(false);
-      }
   
-   
+    console.log("Formatted User Data:", userData);
+
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/v1/users/model", userData);
+      console.log("Response:", response);
+      if (response.status === 200 || response.status === 201) {
+        // Show success message
+        toast.success("User data submitted successfully!");
+
+        // Reset form only after successful submission
+        setRole("Student");
+        setOtherDetails([{ key: "", value: "" }]);
+        handleClose();
+      } else {
+        toast.error("Failed to submit user data!");
+      }
+    } catch (error) {
+      toast.error("Error submitting user data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
         sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
           width: { xs: "90%", sm: 600, md: 800, lg: 1000 },
           bgcolor: "black",
           p: 3,
-          mx: "auto",
-          mt: "10%",
           borderRadius: 2,
           boxShadow: 24,
         }}
@@ -104,7 +131,8 @@ const UserModelModal = ({ open, handleClose }) => {
         >
           <MenuItem value="Student">Student</MenuItem>
           <MenuItem value="Teacher">Teacher</MenuItem>
-          <MenuItem value="Admin">Admin</MenuItem>
+          <MenuItem value="Faculty">Faculty</MenuItem>
+          <MenuItem value="Manager">Manager</MenuItem>
         </TextField>
 
         {/* Dynamic Key-Value Fields */}
@@ -113,20 +141,30 @@ const UserModelModal = ({ open, handleClose }) => {
         </Typography>
         {otherDetails.map((detail, index) => (
           <Box key={index} sx={{ display: "flex", gap: 2, mb: 1 }}>
+            {/* Key Input */}
             <TextField
               label="Key"
               value={detail.key}
               onChange={(e) => handleDetailChange(index, "key", e.target.value)}
               sx={{ flex: 1 }}
             />
+
+            {/* Type Dropdown */}
             <TextField
-              label="Value"
+              select
+              label="Type"
               value={detail.value}
               onChange={(e) =>
                 handleDetailChange(index, "value", e.target.value)
               }
               sx={{ flex: 1 }}
-            />
+            >
+              <MenuItem  value="String">String</MenuItem>
+              <MenuItem value="Number">Number</MenuItem>
+              <MenuItem value="Array">Array</MenuItem>
+            </TextField>
+
+            {/* Remove Button */}
             <IconButton onClick={() => removeDetailField(index)} color="error">
               <FaTrash />
             </IconButton>
@@ -153,7 +191,7 @@ const UserModelModal = ({ open, handleClose }) => {
             py: 1,
             fontSize: "0.875rem",
             width: "150px",
-           
+
             display: "block",
           }}
           disabled={loading}

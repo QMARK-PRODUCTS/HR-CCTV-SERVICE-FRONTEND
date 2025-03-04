@@ -10,24 +10,27 @@ export default function CameraGrid({ cameras }) {
   useEffect(() => {
     const hlsInstances = [];
 
-    cameras.forEach((url, index) => {
+    cameras.forEach((source, index) => {
       if (videoRefs.current[index]) {
         const video = videoRefs.current[index];
 
-        if (Hls.isSupported()) {
-          const hls = new Hls();
-          hls.loadSource(url);
-          hls.attachMedia(video);
-          hlsInstances.push(hls);
-
-          hls.on(Hls.Events.ERROR, (event, data) => {
-            console.error("HLS.js Error:", event, data);
-          });
-        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-          video.src = url;
-          video.addEventListener("loadedmetadata", () => {
-            video.play().catch((err) => console.error("Auto-play error:", err));
-          });
+        if (typeof source === "string") {
+          // Handle HLS Streams
+          if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(source);
+            hls.attachMedia(video);
+            hlsInstances.push(hls);
+          } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+            video.src = source;
+            video.addEventListener("loadedmetadata", () => {
+              video.play().catch((err) => console.error("Auto-play error:", err));
+            });
+          }
+        } else if (source instanceof MediaStream) {
+          // Handle WebCam Stream
+          video.srcObject = source;
+          video.play().catch((err) => console.error("Webcam play error:", err));
         }
       }
     });
@@ -62,7 +65,7 @@ export default function CameraGrid({ cameras }) {
                 borderRadius: "4px",
               }}
             >
-              Camera {index + 1}
+              {typeof url === "string" ? `Camera ${index + 1}` : "Webcam"}
             </Typography>
           </Card>
         </Grid>

@@ -1,5 +1,7 @@
-import * as React from 'react';
+
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { alpha } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -30,17 +32,40 @@ const xThemeComponents = {
 
 export default function Dashboard(props) {
   const location = useLocation();
-  
-  const cameras = [
-    'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
-    'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
-    'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
-    'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
-    'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
-    'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
-    'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
+  const cameraMode = useSelector((state) => state.appSettings.cameraMode);
+  const [cameraSources, setCameraSources] = useState([]);
 
-  ];
+  useEffect(() => {
+    let mediaStream = null;
+  
+    if (cameraMode === "test") {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          mediaStream = stream;
+          setCameraSources([stream]); // Store the webcam stream
+        })
+        .catch((err) => console.error("Error accessing webcam:", err));
+    } else {
+      setCameraSources( [
+        'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
+        'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
+        'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
+        'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
+        'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
+        'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
+        'http://127.0.0.1:8080/api/v1/camera-sources/hls/5536370868320438345/index.m3u8',
+      ]);
+    }
+  
+    // Cleanup function to stop the webcam stream when switching mode
+    return () => {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [cameraMode]);
+  
 
   return (
     <AppTheme {...props} themeComponents={xThemeComponents}>
@@ -69,10 +94,9 @@ export default function Dashboard(props) {
             }}
           >
             <Header />
-
             {location.pathname === '/dashboard/home' && <MainGrid />}
-            {location.pathname === '/dashboard/cameras' && <CameraGrid cameras={cameras} />}
-            {location.pathname === '/dashboard/Users' && <UsersPage  />}
+            {location.pathname === '/dashboard/cameras' && <CameraGrid cameras={cameraSources} />}
+            {location.pathname === '/dashboard/Users' && <UsersPage />}
             {location.pathname === '/dashboard/settings' && <Settings />}
             {location.pathname === '/dashboard/about' && <About />}
             {location.pathname === '/dashboard/feedback' && <Feedback />}
