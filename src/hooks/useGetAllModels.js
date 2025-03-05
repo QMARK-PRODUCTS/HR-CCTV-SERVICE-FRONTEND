@@ -12,7 +12,7 @@ const useGetAllModels = () => {
       try {
         const response = await axios.get("/api/v1/users/model");
         setModels(response.data.result); // Assuming the response has the list of models
-        console.log(response.result)
+        console.log(response.data)
       } catch (err) {
         setError(err.message || "Failed to fetch models");
       } finally {

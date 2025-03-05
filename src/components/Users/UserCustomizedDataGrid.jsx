@@ -1,12 +1,13 @@
 import React from 'react'
 import { DataGrid } from '@mui/x-data-grid';
-import { Usercolumns, Userrows } from '../dashboard/internals/data/gridData';
-const UserCustomizedDataGrid = () => {
+
+const UserCustomizedDataGrid = ({Usercolumns,Userrows}) => {
   return (
        <DataGrid
          checkboxSelection
          rows={Userrows}
          columns={Usercolumns}
+         rowHeight={70} 
          getRowClassName={(params) =>
            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
          }
@@ -31,7 +32,7 @@ const UserCustomizedDataGrid = () => {
                operatorInputProps: {
                  variant: 'outlined',
                  size: 'small',
-                 sx: { mt: 'auto' },
+                 sx: { mt: '10px' },
                },
                valueInputProps: {
                  InputComponentProps: {
