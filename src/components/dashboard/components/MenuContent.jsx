@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 const mainListItems = [
   { text: 'Home', icon: <HomeRoundedIcon />, route: '/dashboard/home' },
   { text: 'Cameras', icon: <Camera />, route: '/dashboard/cameras' },
-  { text: 'Users', icon: <SupervisedUserCircleRounded/>, route: '/dashboard/Users' },
+  { text: 'People', icon: <SupervisedUserCircleRounded/>, route: '/dashboard/Users' },
 ];
 
 const secondaryListItems = [

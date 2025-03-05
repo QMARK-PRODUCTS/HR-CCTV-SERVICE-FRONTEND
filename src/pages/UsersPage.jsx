@@ -8,6 +8,8 @@ import UserModelModal from '../components/Users/UserModelModal';
 import CreateUserModal from '../components/Users/CreateUserModal';
 import useGetAllUsers from '../hooks/useGetAllUsers';
 import { baseUrl } from '../utils/Endpoint';
+import axios from '../axios/axios';
+import { toast } from 'react-toastify';
 
 const UsersPage = () => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -36,9 +38,23 @@ const UsersPage = () => {
         handleMenuClose();
     };
 
-    const handleDelete = () => {
+    const handleDelete = async() => {
         console.log(`Delete User: ${selectedUser}`);
-        handleMenuClose();
+        if (!selectedUser) return;
+        try {
+          const response = await axios.delete(`/api/v1/users/${selectedUser}`)
+          if (response.status === 200) {
+            toast.success('User deleted successfully');
+            // Refresh the user list (if applicable)
+            window.location.reload()
+        }
+        } catch (error) {
+          console.error('Error deleting user:', error);
+        toast.error('Failed to delete user');
+        }finally {
+          handleMenuClose();
+      }
+  
     };
 
     const handleView = () => {
@@ -94,10 +110,10 @@ const UsersPage = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 2 }}>
                 <Button variant="contained" sx={{ fontWeight: 600 }} onClick={() => setModalOpen(true)}>
-                    User Model
+                    Add Model
                 </Button>
                 <Button variant="contained" sx={{ fontWeight: 600 }} onClick={() => setCreateModalOpen(true)}>
-                    Add User
+                    Add People
                 </Button>
             </Box>
             <Grid spacing={5} columns={5}>

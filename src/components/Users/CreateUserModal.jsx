@@ -131,6 +131,7 @@ const CreateUserModal = ({ open, handleClose }) => {
         });
         setSelectedModel("");
         handleClose();
+        window.location.reload()
       } else {
         toast.error("Failed to submit user data!");
       }

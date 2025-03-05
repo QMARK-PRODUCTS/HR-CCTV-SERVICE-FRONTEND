@@ -23,7 +23,7 @@ function App() {
             position: "fixed",
             bottom: 20,
             right: "0%",
-            transform: "translateX(-50%)",
+            transform: "translateX(-10%)",
             backgroundColor: "red",
             color: "white",
             padding: "10px 20px",
