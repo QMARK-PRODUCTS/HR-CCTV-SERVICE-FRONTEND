@@ -8,58 +8,55 @@ import { FaEye } from "react-icons/fa";
 import Avatar from "@mui/material/Avatar";
 import Hls from "hls.js";
 
-export default function CameraGrid({ cameras }) {
+export default function CameraGrid({ cameras , castDetails}) {
   const videoRefs = useRef([]);
   const [fullScreenIndex, setFullScreenIndex] = useState(null);
   // Dummy Cast Details
-  const castDetails = [
-    {
-      name: "John Doe",
-      role: "Security Officer",
-      avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    },
-    {
-      name: "Jane Smith",
-      role: "Supervisor",
-      avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-    },
-    {
-      name: "Mark Wilson",
-      role: "Technician",
-      avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-    },
-    {
-      name: "Anna Johnson",
-      role: "Analyst",
-      avatar: "https://randomuser.me/api/portraits/women/4.jpg",
-    },
-  ];
+  // useEffect(() => {
+  //   const hlsInstances = [];
+
+  //   cameras.forEach((source, index) => {
+  //     if (videoRefs.current[index]) {
+  //       const video = videoRefs.current[index];
+
+  //       if (typeof source === "string") {
+  //         if (Hls.isSupported()) {
+  //           const hls = new Hls();
+  //           hls.loadSource(source);
+  //           hls.attachMedia(video);
+  //           hlsInstances.push(hls);
+  //         } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+  //           video.src = source;
+  //         }
+  //       } else if (source instanceof MediaStream) {
+  //         video.srcObject = source;
+  //       }
+  //     }
+  //   });
+
+  //   return () => {
+  //     hlsInstances.forEach((hls) => hls.destroy());
+  //   };
+  // }, [cameras]);
+  const imgRefs = useRef([]);
+
   useEffect(() => {
-    const hlsInstances = [];
+    if (!Array.isArray(cameras)) return; // Ensure cameras is an array
 
     cameras.forEach((source, index) => {
-      if (videoRefs.current[index]) {
-        const video = videoRefs.current[index];
-
-        if (typeof source === "string") {
-          if (Hls.isSupported()) {
-            const hls = new Hls();
-            hls.loadSource(source);
-            hls.attachMedia(video);
-            hlsInstances.push(hls);
-          } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-            video.src = source;
-          }
-        } else if (source instanceof MediaStream) {
-          video.srcObject = source;
-        }
+      const img = imgRefs.current[index];
+      if (img) {
+        img.src = source; // Assign the source dynamically
       }
     });
 
     return () => {
-      hlsInstances.forEach((hls) => hls.destroy());
+      imgRefs.current.forEach((img) => {
+        if (img) img.src = ""; // Reset image source on cleanup
+      });
     };
-  }, [cameras]);
+  }, [cameras]); // Removed videoRefs.current from dependencies since it's unnecessary
+
 
   return (
     <Grid
@@ -97,7 +94,7 @@ export default function CameraGrid({ cameras }) {
               }}
               onClick={() => setFullScreenIndex(index)}
             >
-              <video
+              {/* <video
                 ref={(el) => (videoRefs.current[index] = el)}
                 autoPlay
                 muted
@@ -108,7 +105,17 @@ export default function CameraGrid({ cameras }) {
                 style={{
                   objectFit: "cover",
                 }}
-              />
+              /> */}
+                <img
+          key={index}
+          ref={(el) => (imgRefs.current[index] = el)}
+          src={url} // Directly use URL
+          alt={`Camera ${index + 1}`}
+          width="100%"
+          height="100%"
+          style={{ objectFit: "cover" }}
+          onError={(e) => (e.target.src = "/assests/Video dummy.png")} // Fallback for broken images
+        />
               <Typography
                 variant="subtitle2"
                 sx={{
@@ -172,7 +179,7 @@ export default function CameraGrid({ cameras }) {
                       }}
                     >
                       <Avatar
-                        src={cast.avatar}
+                        src={cast?.image_url}
                         sx={{ width: 50, height: 50, mr: 2 }}
                       />
                       <div>
@@ -180,13 +187,13 @@ export default function CameraGrid({ cameras }) {
                           variant="body1"
                           sx={{ fontSize: "15px", fontWeight: "bold" }}
                         >
-                          {cast.name}
+                          {cast?.name}
                         </Typography>
                         <Typography
                           variant="body2"
                           sx={{ fontSize: "13px",  }}
                         >
-                          {cast.role}
+                          {cast?.role}
                         </Typography>
                       </div>
                     </div>
