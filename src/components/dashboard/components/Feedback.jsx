@@ -13,11 +13,12 @@ import {
   Grid,
 } from "@mui/material";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { useColorScheme, useTheme } from '@mui/material/styles';
 
 const StyledForm = styled(Box)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: theme.spacing(2),
-  backgroundColor: "rgba(0, 0, 0, 0.8)",
+  backgroundColor: theme.palette.mode === "dark" ? theme.palette.background.default : "#fff",
   boxShadow: "0 0 20px rgba(59, 63, 63, 0.67)",
   "& .MuiTextField-root": {
     marginBottom: theme.spacing(2),
@@ -66,7 +67,8 @@ function Feedback() {
     message: "",
     severity: "success",
   });
-
+ const theme = useTheme();
+  const { mode } = useColorScheme();
   const validateForm = () => {
     const newErrors = {};
     if (!formData.fullName || formData.fullName.length < 2) {
@@ -121,7 +123,9 @@ function Feedback() {
         Feedback
       </Typography> */}
 
-      <Container maxWidth="md">
+      <Container
+      
+      maxWidth="md">
         <Typography
           variant="h2"
           align="center"
@@ -197,7 +201,7 @@ function Feedback() {
                 disabled={loading}
                 sx={{
                   height: 56,
-                  color: "black",
+                  
                   fontWeight: "bold",
                 }}
               >
