@@ -8,12 +8,15 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
+import { useColorScheme, useTheme } from '@mui/material/styles';
 import { Delete } from "@mui/icons-material";
 import useGetAllModels from "../../hooks/useGetAllModels";
 import axios from "../../axios/axios";
 import { toast } from "react-toastify";
 
 const CreateUserModal = ({ open, handleClose }) => {
+  const theme = useTheme();
+  const { mode } = useColorScheme();
   const [selectedModel, setSelectedModel] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -151,11 +154,11 @@ const CreateUserModal = ({ open, handleClose }) => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: { xs: "90%", sm: 600, md: 800, lg: 1000 },
-          bgcolor: "black",
+          bgcolor: mode === "dark" ? theme.palette.background.default : "#fff",
+          color: mode === "dark" ? theme.palette.text.primary : "#000",
           p: 3,
           borderRadius: 2,
           boxShadow: 24,
-          color: "white",
         }}
       >
         <Typography variant="h6" sx={{ mb: 2 }}>

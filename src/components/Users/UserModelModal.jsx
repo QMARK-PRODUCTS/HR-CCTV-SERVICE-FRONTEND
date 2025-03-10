@@ -11,8 +11,11 @@ import {
 import { FaPlus, FaTrash } from "react-icons/fa";
 import axios from "../../axios/axios";
 import { toast } from "react-toastify";
+import { useColorScheme, useTheme } from '@mui/material/styles';
 
 const UserModelModal = ({ open, handleClose }) => {
+  const theme = useTheme();
+  const { mode } = useColorScheme();
   const [role, setRole] = useState("Student");
   const [otherDetails, setOtherDetails] = useState([
     { key: "", value: "String" },
@@ -108,7 +111,8 @@ const removeDetailField = (index) => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: { xs: "90%", sm: 600, md: 800, lg: 1000 },
-          bgcolor: "black",
+          bgcolor: mode === "dark" ? theme.palette.background.default : "#fff",
+          color: mode === "dark" ? theme.palette.text.primary : "#000",
           p: 3,
           borderRadius: 2,
           boxShadow: 24,
