@@ -7,8 +7,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import { FaEye } from "react-icons/fa";
 import Avatar from "@mui/material/Avatar";
 import Hls from "hls.js";
+import { baseUrl } from "../../../utils/Endpoint";
 
-export default function CameraGrid({ cameras , castDetails}) {
+export default function CameraGrid({ cameras, castDetails }) {
   const videoRefs = useRef([]);
   const [fullScreenIndex, setFullScreenIndex] = useState(null);
   // Dummy Cast Details
@@ -56,7 +57,6 @@ export default function CameraGrid({ cameras , castDetails}) {
       });
     };
   }, [cameras]); // Removed videoRefs.current from dependencies since it's unnecessary
-
 
   return (
     <Grid
@@ -106,16 +106,20 @@ export default function CameraGrid({ cameras , castDetails}) {
                   objectFit: "cover",
                 }}
               /> */}
-                <img
-          key={index}
-          ref={(el) => (imgRefs.current[index] = el)}
-          src={url} // Directly use URL
-          alt={`Camera ${index + 1}`}
-          width="100%"
-          height="100%"
-          style={{ objectFit: "cover" }}
-          onError={(e) => (e.target.src = "/assests/Video dummy.png")} // Fallback for broken images
-        />
+              <img
+                key={index}
+                ref={(el) => (imgRefs.current[index] = el)}
+                src={url} // Directly use URL
+                alt={`Camera ${index + 1}`}
+                width="100%"
+                height="100%"
+                style={{ objectFit: "cover" }}
+                onError={(e) => {
+                  console.warn(`Image failed to load: ${url}`);
+                  e.target.onerror = null; // Prevent infinite loop in case the fallback image also fails
+                  e.target.src = "/assets/Video dummy.png"; // ✅ Corrected path
+                }} // Fallback for broken images
+              />
               <Typography
                 variant="subtitle2"
                 sx={{
@@ -179,7 +183,7 @@ export default function CameraGrid({ cameras , castDetails}) {
                       }}
                     >
                       <Avatar
-                        src={cast?.image_url}
+                        src={`${baseUrl}${cast?.image_url}`}
                         sx={{ width: 50, height: 50, mr: 2 }}
                       />
                       <div>
@@ -189,10 +193,7 @@ export default function CameraGrid({ cameras , castDetails}) {
                         >
                           {cast?.name}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ fontSize: "13px",  }}
-                        >
+                        <Typography variant="body2" sx={{ fontSize: "13px" }}>
                           {cast?.role}
                         </Typography>
                       </div>

@@ -55,7 +55,7 @@ export default function Dashboard(props) {
     let ws = null;
   
     if (location.pathname === "/dashboard/cameras") {
-      if (cameraMode === "test" && location.pathname === "/dashboard/cameras") {
+      if (cameraMode === "test") {
         // Fetch available camera sources from API using Axios
        // Directly set the camera source URL instead of calling the API
        const sources = [`${StreamUrl}/api/v1/camera-sources/webcam-video`];
