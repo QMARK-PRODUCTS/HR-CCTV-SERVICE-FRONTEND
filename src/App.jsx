@@ -2,6 +2,7 @@ import "./App.css";
 import Dashboard from "./components/dashboard/Dashboard";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   const cameraMode = useSelector((state) => state.appSettings.cameraMode);
@@ -10,9 +11,10 @@ function App() {
     <>
       <Router>
         <Routes>
+        <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard/*" element={<Dashboard />} />
-          {/* Redirect to /dashboard/home when app starts */}
-          <Route path="*" element={<Navigate to="/dashboard/home" />} />
+          {/* Redirect to login if not authenticated */}
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </Router>
 
