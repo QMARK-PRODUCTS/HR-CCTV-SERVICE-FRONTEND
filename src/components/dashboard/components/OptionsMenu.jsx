@@ -10,6 +10,9 @@ import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MenuButton from './MenuButton';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../../../redux/slices/authSlice';
 
 const MenuItem = styled(MuiMenuItem)({
   margin: '2px 0',
@@ -23,6 +26,13 @@ export default function OptionsMenu() {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
   };
   return (
     <React.Fragment>
@@ -69,7 +79,7 @@ export default function OptionsMenu() {
           }}
         >
           <ListItemText>Logout</ListItemText>
-          <ListItemIcon>
+          <ListItemIcon onClick={handleLogout}>
             <LogoutRoundedIcon fontSize="small" />
           </ListItemIcon>
         </MenuItem>

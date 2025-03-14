@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography, Select, MenuItem, FormControl } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setCameraMode } from "../../../redux/appSettingsSlice";
+import { setCameraMode } from "../../../redux/slices/appSettingsSlice";
 
 
 function Settings() {
