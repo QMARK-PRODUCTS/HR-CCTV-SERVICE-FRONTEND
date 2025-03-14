@@ -82,7 +82,7 @@ const removeDetailField = (index) => {
 
     try {
       setLoading(true);
-      const response = await axios.post("/api/v1/users/model", userData);
+      const response = await axios.post("/api/v1/people/model", userData);
       console.log("Response:", response);
       if (response.status === 200 || response.status === 201) {
         // Show success message

@@ -42,7 +42,7 @@ const UsersPage = () => {
         console.log(`Delete User: ${selectedUser}`);
         if (!selectedUser) return;
         try {
-          const response = await axios.delete(`/api/v1/users/${selectedUser}`)
+          const response = await axios.delete(`/api/v1/people/${selectedUser}`)
           if (response.status === 200) {
             toast.success('User deleted successfully');
             // Refresh the user list (if applicable)

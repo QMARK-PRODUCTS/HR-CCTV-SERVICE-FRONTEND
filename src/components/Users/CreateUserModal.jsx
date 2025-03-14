@@ -41,16 +41,25 @@ const CreateUserModal = ({ open, handleClose }) => {
 
     // Handle model selection
     const handleModelSelect = (value) => {
+      if (!value) {
+        toast.error("Invalid model selected");
+        return;
+      }
+    
       const selectedModelData = models.find((model) => model.id === value);
+      if (!selectedModelData) {
+        toast.error("Selected model not found in models array");
+        return;
+      }
     
       setSelectedModel(value);
       setFormData((prev) => ({
         ...prev,
         userModelId: value,
-        otherDetails:  {}, // Set correct details
+        otherDetails: {}, 
       }));
     };
-  
+    
     
   // Handle changes for otherDetails fields
   const handleOtherDetailsChange = (key, value) => {
@@ -120,7 +129,7 @@ const CreateUserModal = ({ open, handleClose }) => {
    // Convert otherDetails to a JSON string and append as a regular form field
    formDataToSend.append("otherDetails", JSON.stringify(formData.otherDetails));
    console.log(formDataToSend,)
-      const response = await axios.post("/api/v1/users", formDataToSend);
+      const response = await axios.post("/api/v1/people", formDataToSend);
       console.log("Response:", response);
       if (response.status === 200 || response.status === 201) {
         // Show success message

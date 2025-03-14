@@ -6,7 +6,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import { Camera, SupervisedUserCircleRounded } from '@mui/icons-material';
+import { Camera, SupervisedUserCircleRounded, DashboardCustomize } from '@mui/icons-material';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
@@ -16,6 +16,7 @@ const mainListItems = [
   { text: 'Home', icon: <HomeRoundedIcon />, route: '/dashboard/home' },
   { text: 'Cameras', icon: <Camera />, route: '/dashboard/cameras' },
   { text: 'People', icon: <SupervisedUserCircleRounded/>, route: '/dashboard/Users' },
+  { text: 'Function', icon: <DashboardCustomize/>, route: '/dashboard/Functions' },
 ];
 
 const secondaryListItems = [

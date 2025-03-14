@@ -10,7 +10,7 @@ const useGetAllModels = () => {
   useEffect(() => {
     const fetchModels = async () => {
       try {
-        const response = await axios.get("/api/v1/users/model");
+        const response = await axios.get("/api/v1/people/model");
         setModels(response.data.result); // Assuming the response has the list of models
         console.log(response.data)
       } catch (err) {

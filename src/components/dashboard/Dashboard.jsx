@@ -24,6 +24,7 @@ import {
 import UsersPage from "../../pages/UsersPage";
 import { StreamUrl, webSockectBaseUrl } from "../../utils/Endpoint";
 import axios from "../../axios/axios";
+import FunctionPage from "../../pages/FunctionPage";
 const xThemeComponents = {
   ...chartsCustomizations,
   ...dataGridCustomizations,
@@ -149,6 +150,7 @@ export default function Dashboard(props) {
                 {location.pathname === "/dashboard/home" && <MainGrid />}
                 {location.pathname === "/dashboard/cameras" && ( <CameraGrid cameras={cameraSources}  castDetails ={castDetails} />)}
                 {location.pathname === "/dashboard/Users" && <UsersPage />}
+                {location.pathname === "/dashboard/Functions" && <FunctionPage />}
                 {location.pathname === "/dashboard/settings" && <Settings />}
                 {location.pathname === "/dashboard/about" && <About />}
                 {location.pathname === "/dashboard/feedback" && <Feedback />}
