@@ -11,46 +11,64 @@ import {
 import { MdEdit, MdDelete } from "react-icons/md";
 import { Add } from "@mui/icons-material";
 import FunctionModal from "../components/functions/FunctionModal";
+import { toast } from "react-toastify";
+import axios from "../axios/axios";
+import useGetAllFunctions from "../hooks/useGetAllFunctions";
 
 const FunctionPage = () => {
-  const [functions, setFunctions] = useState([
-    {
-      id: 1,
-      functionName: "Security Check",
-      type: "Detect",
-      timeSlot: "18:00 - 06:00",
-      camerasAssigned: ["Camera 1", "Camera 2"],
-    },
-    {
-      id: 2,
-      functionName: "Security Check",
-      type: "Detect",
-      timeSlot: "18:00 - 06:00",
-      camerasAssigned: ["Camera 1", "Camera 2"],
-    },
-    {
-      id: 3,
-      functionName: "Security Check",
-      type: "Detect",
-      timeSlot: "18:00 - 06:00",
-      camerasAssigned: ["Camera 1", "Camera 2"],
-    },
-    {
-      id: 4,
-      functionName: "Security Check",
-      type: "Detect",
-      timeSlot: "18:00 - 06:00",
-      camerasAssigned: ["Camera 1", "Camera 2"],
-    },
-    {
-      id: 5,
-      functionName: "Security Check",
-      type: "Detect",
-      timeSlot: "18:00 - 06:00",
-      camerasAssigned: ["Camera 1", "Camera 2"],
-    },
-  ]);
-
+  // const [functions, setFunctions] = useState([
+  //   {
+  //     id: 1,
+  //     functionName: "Security Check",
+  //     type: "Detect",
+  //     timeSlot: "18:00 - 06:00",
+  //     camerasAssigned: { camera: ["Camera 1", "Camera 2"] },
+  //     saveRecordings: false,
+  //     notify: false,
+  //     description: "Night-time security check to detect suspicious activity.",
+  //   },
+  //   {
+  //     id: 2,
+  //     functionName: "Patrol Monitoring",
+  //     type: "Track",
+  //     timeSlot: "06:00 - 12:00",
+  //     camerasAssigned: { camera: ["Camera 3"] },
+  //     saveRecordings: true,
+  //     notify: true,
+  //     description: "Monitor patrol routes during the morning shift.",
+  //   },
+  //   {
+  //     id: 3,
+  //     functionName: "Intruder Alert",
+  //     type: "Detect",
+  //     timeSlot: "12:00 - 18:00",
+  //     camerasAssigned: { camera: ["Camera 2", "Camera 4"] },
+  //     saveRecordings: true,
+  //     notify: false,
+  //     description: "Detect unauthorized intrusions in the afternoon.",
+  //   },
+  //   {
+  //     id: 4,
+  //     functionName: "Perimeter Security",
+  //     type: "Track",
+  //     timeSlot: "18:00 - 06:00",
+  //     camerasAssigned: { camera: ["Camera 1", "Camera 3"] },
+  //     saveRecordings: false,
+  //     notify: true,
+  //     description: "Track perimeter activity during the night shift.",
+  //   },
+  //   {
+  //     id: 5,
+  //     functionName: "Entry Surveillance",
+  //     type: "Detect",
+  //     timeSlot: "06:00 - 12:00",
+  //     camerasAssigned: { camera: ["Camera 4"] },
+  //     saveRecordings: true,
+  //     notify: false,
+  //     description: "Detect people in the morning.",
+  //   },
+  // ]);
+  const {functions , loading , error ,setFunctions ,refetch} = useGetAllFunctions();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingFunction, setEditingFunction] = useState(null);
 
@@ -64,28 +82,45 @@ const FunctionPage = () => {
     setModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    setFunctions(functions.filter((func) => func.id !== id));
-  };
-
-  const handleSave = (newFunction) => {
-    const formattedFunction = {
-      ...newFunction,
-      camerasAssigned: Array.isArray(newFunction.camerasAssigned)
-        ? newFunction.camerasAssigned
-        : newFunction.camerasAssigned.split(",").map((c) => c.trim()), // Convert comma-separated string to array
-    };
-  
-    if (editingFunction) {
-      setFunctions(
-        functions.map((func) =>
-          func.id === editingFunction.id ? { ...func, ...formattedFunction } : func
-        )
-      );
-    } else {
-      setFunctions([...functions, { id: Date.now(), ...formattedFunction }]);
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/v1/functions/{function_id}/?functionId=${id}`);
+      setFunctions((prevFunctions) => prevFunctions.filter((func) => func.id !== id));
+      toast.success("Function deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting function:", error);
+      toast.error("Failed to delete function. Please try again.");
     }
   };
+  
+  const handleSave = async (newFunction) => {
+    try {
+      if (editingFunction?.id) {
+        const functionId = editingFunction.id;
+  
+        // Ensure functionId is in the correct format
+        const response = await axios.put(`/api/v1/functions?functionId=${functionId}`, newFunction);
+  
+        setFunctions(functions.map((func) =>
+          func.id === editingFunction.id ? { ...func, ...response.data } : func
+        ));
+        toast.success("Function updated successfully!");
+      
+      } else {
+        const response = await axios.post("/api/v1/functions", newFunction);
+        
+        setFunctions([...functions, response.data]);
+        toast.success("Function added successfully!");
+      }
+      refetch()
+    } catch (error) {
+      console.error("Error saving function:", error);
+      toast.error("Failed to save function. Please try again.");
+    }
+  
+    setModalOpen(false);
+  };
+  
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" }, p: 2 }}>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
@@ -102,85 +137,130 @@ const FunctionPage = () => {
         </Button>
       </Box>
 
-      <Grid container spacing={5}>
-        {functions.map((func) => (
-          <Grid item xs={12} sm={6} md={4} key={func.id}>
-            <Card
-              sx={{
-                width: "100%",
-                p: 2,
-                borderRadius: "12px",
-                boxShadow: 1,
-                textAlign: "left",
-                display: "flex",
-                flexDirection: "column",
-                gap: 1,
-              }}
+      {loading ? (
+  <Typography variant="h6" textAlign="center">
+    Loading...
+  </Typography>
+) : error ? (
+  <Typography variant="h6" textAlign="center" color="error">
+    {error}
+  </Typography>
+) : functions.length === 0 ? (
+  <Typography variant="h6" textAlign="center">
+    No Data Available
+  </Typography>
+) : (
+  <Grid container spacing={5}>
+    {functions.map((func) => (
+      <Grid item xs={12} sm={6} md={4} key={func.id}>
+        <Card
+          sx={{
+            width: "100%",
+            p: 2,
+            borderRadius: "12px",
+            boxShadow: 1,
+            textAlign: "left",
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold">
+            {func.name}
+          </Typography>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" fontWeight="500">
+              Description
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ textAlign: "right", flexGrow: 1 }}
             >
-              <Typography variant="h6" fontWeight="bold">
-                {func.functionName}
-              </Typography>
+              {func.description}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" fontWeight="500">
+              Type
+            </Typography>
+            <Typography variant="body2">{func.type}</Typography>
+          </Box>
+          <Divider />
 
-              <Box display="flex" justifyContent="space-between">
-                <Typography variant="body2" fontWeight="500">
-                  Type
-                </Typography>
-                <Typography variant="body2">{func.type}</Typography>
-              </Box>
-              <Divider />
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" fontWeight="500">
+              Time Slot
+            </Typography>
+            <Typography variant="body2">{func.timeSlot}</Typography>
+          </Box>
+          <Divider />
 
-              <Box display="flex" justifyContent="space-between">
-                <Typography variant="body2" fontWeight="500">
-                  Time Slot
-                </Typography>
-                <Typography variant="body2">{func.timeSlot}</Typography>
-              </Box>
-              <Divider />
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" fontWeight="500">
+              Cameras Assigned
+            </Typography>
+            <Typography variant="body2">
+              {func?.camerasAssigned?.camera?.join(", ") || "None"}
+            </Typography>
+          </Box>
+          <Divider />
 
-              <Box display="flex" justifyContent="space-between">
-                <Typography variant="body2" fontWeight="500">
-                  Cameras Assigned
-                </Typography>
-                <Typography variant="body2">
-                  {func.camerasAssigned.join(", ")}
-                </Typography>
-              </Box>
-
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: 1,
-                  mt: 2,
-                }}
-              >
-                <IconButton
-                  sx={{
-                    color: "#1976D2",
-                    transition: "0.3s",
-                    "&:hover": { color: "#1257A0" },
-                  }}
-                  size="small"
-                  onClick={() => handleEdit(func)}
-                >
-                  <MdEdit />
-                </IconButton>
-                <IconButton
-                  sx={{
-                    color: "#D32F2F",
-                    transition: "0.3s",
-                    "&:hover": { color: "#A12121" },
-                  }}
-                  size="small"
-                  onClick={() => handleDelete(func.id)}
-                >
-                  <MdDelete />
-                </IconButton>
-              </Box>
-            </Card>
-          </Grid>
-        ))}
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" fontWeight="500">
+              Save Recordings
+            </Typography>
+            <Typography variant="body2">
+              {func.saveRecordings ? "Yes" : "No"}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body2" fontWeight="500">
+              Notify
+            </Typography>
+            <Typography variant="body2">
+              {func.notify ? "Yes" : "No"}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 1,
+              mt: 2,
+            }}
+          >
+            <IconButton
+              sx={{
+                color: "#1976D2",
+                transition: "0.3s",
+                "&:hover": { color: "#1257A0" },
+              }}
+              size="small"
+              onClick={() => handleEdit(func)}
+            >
+              <MdEdit />
+            </IconButton>
+            <IconButton
+              sx={{
+                color: "#D32F2F",
+                transition: "0.3s",
+                "&:hover": { color: "#A12121" },
+              }}
+              size="small"
+              onClick={() => handleDelete(func.id)}
+            >
+              <MdDelete />
+            </IconButton>
+          </Box>
+        </Card>
       </Grid>
+    ))}
+  </Grid>
+)}
+
 
       {/* Add / Edit Modal */}
       <FunctionModal

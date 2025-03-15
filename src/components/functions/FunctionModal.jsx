@@ -9,28 +9,42 @@ import {
   Select,
   OutlinedInput,
   Chip,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
+import { toast } from "react-toastify";
 
-const availableCameras = ["Camera 1", "Camera 2", "Camera 3", "Camera 4"];
+const availableCameras = ["camera 1", "camera 2"];
 const timeSlots = ["06:00 - 12:00", "12:00 - 18:00", "18:00 - 06:00"];
 
 const FunctionModal = ({ open, onClose, onSave, initialData }) => {
   const [formData, setFormData] = useState({
-    functionName: "",
+    name: "",
     type: "",
     timeSlot: "",
-    camerasAssigned: [],
+    description: "",
+    camerasAssigned: { camera: [] }, // Ensures correct structure
+    saveRecordings: false,
+    notify: false,
   });
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      setFormData({
+        ...initialData,
+        camerasAssigned: initialData.camerasAssigned && Array.isArray(initialData.camerasAssigned.camera)
+          ? initialData.camerasAssigned
+          : { camera: [] },
+      });
     } else {
       setFormData({
-        functionName: "",
+        name: "",
         type: "",
         timeSlot: "",
-        camerasAssigned: [],
+        description: "",
+        camerasAssigned: { camera: [] }, // Ensures correct structure
+        saveRecordings: false,
+        notify: false,
       });
     }
   }, [initialData]);
@@ -39,17 +53,39 @@ const FunctionModal = ({ open, onClose, onSave, initialData }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleCameraChange = (event) => {
-    setFormData({ ...formData, camerasAssigned: event.target.value });
+  const handleToggle = (name) => (event) => {
+    setFormData({ ...formData, [name]: event.target.checked });
   };
 
-  const handleSubmit = () => {
-    if (!formData.functionName || !formData.type || !formData.timeSlot || formData.camerasAssigned.length === 0) {
-      alert("All fields are required!");
+  const handleCameraChange = (event) => {
+    setFormData((prev) => ({
+      ...prev,
+      camerasAssigned: {
+        camera: event.target.value || [],
+      },
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.type || !formData.timeSlot || !formData.description) {
+      toast.error("All fields are required!");
       return;
     }
-    onSave(formData);
-    onClose();
+
+    // Ensure `camerasAssigned` is always in the correct format
+    const payload = {
+      ...formData,
+      camerasAssigned: {
+        camera: Array.isArray(formData.camerasAssigned?.camera) ? formData.camerasAssigned.camera : [],
+      },
+    };
+
+    try {
+      console.log(payload);
+      await onSave(payload);
+    } catch (error) {
+      console.error("API error:", error);
+    }
   };
 
   return (
@@ -69,37 +105,25 @@ const FunctionModal = ({ open, onClose, onSave, initialData }) => {
           {initialData ? "Edit Function" : "Add Function"}
         </Typography>
 
+        <TextField fullWidth label="Function Name" name="name" value={formData.name} onChange={handleChange} sx={{ mb: 2 }} />
         <TextField
           fullWidth
-          label="Function Name"
-          name="functionName"
-          value={formData.functionName}
+          label="Description"
+          name="description"
+          value={formData.description}
           onChange={handleChange}
+          multiline
+          rows={5}
+          InputProps={{ sx: { minHeight: "100px", pt: 5 } }}
           sx={{ mb: 2 }}
         />
 
-        <TextField
-          fullWidth
-          label="Type"
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          select
-          sx={{ mb: 2 }}
-        >
+        <TextField fullWidth label="Type" name="type" value={formData.type} onChange={handleChange} select sx={{ mb: 2 }}>
           <MenuItem value="Detect">Detect</MenuItem>
           <MenuItem value="Track">Track</MenuItem>
         </TextField>
 
-        <TextField
-          fullWidth
-          label="Time Slot"
-          name="timeSlot"
-          value={formData.timeSlot}
-          onChange={handleChange}
-          select
-          sx={{ mb: 2 }}
-        >
+        <TextField fullWidth label="Time Slot" name="timeSlot" value={formData.timeSlot} onChange={handleChange} select sx={{ mb: 2 }}>
           {timeSlots.map((slot) => (
             <MenuItem key={slot} value={slot}>
               {slot}
@@ -111,11 +135,13 @@ const FunctionModal = ({ open, onClose, onSave, initialData }) => {
           fullWidth
           multiple
           displayEmpty
-          value={formData.camerasAssigned}
+          value={formData.camerasAssigned.camera}
           onChange={handleCameraChange}
           input={<OutlinedInput />}
           renderValue={(selected) =>
-            selected.length === 0 ? "Select Cameras" : (
+            selected.length === 0 ? (
+              "Select Cameras"
+            ) : (
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                 {selected.map((camera) => (
                   <Chip key={camera} label={camera} />
@@ -131,6 +157,14 @@ const FunctionModal = ({ open, onClose, onSave, initialData }) => {
             </MenuItem>
           ))}
         </Select>
+
+        <FormControlLabel
+          control={<Switch checked={formData.saveRecordings} onChange={handleToggle("saveRecordings")} />}
+          label="Save Recordings"
+          sx={{ mb: 2 }}
+        />
+
+        <FormControlLabel control={<Switch checked={formData.notify} onChange={handleToggle("notify")} />} label="Notify" sx={{ mb: 2 }} />
 
         <Box display="flex" justifyContent="space-between" mt={2}>
           <Button onClick={onClose} color="inherit">
