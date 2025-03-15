@@ -10,6 +10,7 @@ import SelectContent from './SelectContent';
 import MenuContent from './MenuContent';
 import CardAlert from './CardAlert';
 import OptionsMenu from './OptionsMenu';
+import { useSelector } from 'react-redux';
 
 const drawerWidth = 240;
 
@@ -25,6 +26,7 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu() {
+  const user = useSelector((state) => state.auth.user);
   return (
     <Drawer
       variant="permanent"
@@ -85,7 +87,7 @@ export default function SideMenu() {
               display: 'block',
             }}
           >
-            Hafiz Shefeekh
+             {user?.name || "Guest"}
           </Typography>
           <Typography
             variant="caption"
@@ -98,7 +100,7 @@ export default function SideMenu() {
               display: 'block',
             }}
           >
-            hafiz@gmail.com
+            {user?.email || "No Email"}
           </Typography>
         </Box>
         <OptionsMenu />
