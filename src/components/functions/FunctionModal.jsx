@@ -119,8 +119,9 @@ const FunctionModal = ({ open, onClose, onSave, initialData }) => {
         />
 
         <TextField fullWidth label="Type" name="type" value={formData.type} onChange={handleChange} select sx={{ mb: 2 }}>
-          <MenuItem value="Detect">Detect</MenuItem>
-          <MenuItem value="Track">Track</MenuItem>
+          <MenuItem value="DETECT">DETECT</MenuItem>
+          <MenuItem value="LOITERING">LOITERING</MenuItem>
+          <MenuItem value="FALL DOWN">FALL DOWN</MenuItem>
         </TextField>
 
         <TextField fullWidth label="Time Slot" name="timeSlot" value={formData.timeSlot} onChange={handleChange} select sx={{ mb: 2 }}>

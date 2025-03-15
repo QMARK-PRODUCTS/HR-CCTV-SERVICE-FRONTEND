@@ -84,7 +84,7 @@ const FunctionPage = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/v1/functions/{function_id}/?functionId=${id}`);
+      await axios.delete(`/api/v1/functions/?functionId=${id}`);
       setFunctions((prevFunctions) => prevFunctions.filter((func) => func.id !== id));
       toast.success("Function deleted successfully!");
     } catch (error) {
@@ -99,7 +99,7 @@ const FunctionPage = () => {
         const functionId = editingFunction.id;
   
         // Ensure functionId is in the correct format
-        const response = await axios.put(`/api/v1/functions?functionId=${functionId}`, newFunction);
+        const response = await axios.put(`/api/v1/functions/?functionId=${functionId}`, newFunction);
   
         setFunctions(functions.map((func) =>
           func.id === editingFunction.id ? { ...func, ...response.data } : func
