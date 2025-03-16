@@ -25,7 +25,7 @@ function App() {
           </PrivateRoute>
         } 
       />
-      <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
+      <Route path="*" element={<Navigate to={user ? "/dashboard/home" : "/login"} />} />
     </Routes>
 
     {/* Show "Test Mode Active" at the bottom of the app */}

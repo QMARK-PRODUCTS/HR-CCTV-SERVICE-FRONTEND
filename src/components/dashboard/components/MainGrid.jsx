@@ -12,11 +12,14 @@ import PageViewsBarChart from './PageViewsBarChart';
 import SessionsChart from './SessionsChart';
 import StatCard from './StatCard';
 import UserCustomizedDataGrid from '../../Users/userCustomizedDataGrid';
+import useGetAllUsers from '../../../hooks/useGetAllUsers';
 
+export default function MainGrid() {
+  const { users } = useGetAllUsers();
 const data = [
   {
     title: 'Users',
-    value: '14k',
+    value: users.length.toString(),
     interval: 'Last 30 days',
     trend: 'up',
     data: [
@@ -46,7 +49,6 @@ const data = [
   },
 ];
 
-export default function MainGrid() {
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       {/* cards */}
