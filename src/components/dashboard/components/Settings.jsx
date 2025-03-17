@@ -64,7 +64,7 @@ const Settings = () => {
 
   const handleDelete = async () => {
      try {
-          await axios.delete(`/api/v1/camera-sources/{camera_id}/?camera_id=${selectedUser}`);
+          await axios.delete(`/api/v1/camera-sources/${selectedUser}`);
           setData((prevRows) => prevRows.filter((row) => row.id !== selectedUser));
           toast.success("Function deleted successfully!");
         } catch (error) {
@@ -80,7 +80,7 @@ const Settings = () => {
       let response;
       if (editData?.id) {
         const Id = editData.id;
-        response = await axios.put(`/api/v1/camera-sources/{camera_id}/?camera_id=${Id}`,formData)
+        response = await axios.put(`/api/v1/camera-sources/${Id}`,formData)
           toast.success("Camera Source updated successfully!");
        
        
