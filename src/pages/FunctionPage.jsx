@@ -19,70 +19,20 @@ import FunctionModal from "../components/functions/FunctionModal";
 import { toast } from "react-toastify";
 import axios from "../axios/axios";
 import useGetAllFunctions from "../hooks/useGetAllFunctions";
+import useGetAllRecordings from "../hooks/useGetAllRecordings";
 
 const FunctionPage = () => {
-  // const [functions, setFunctions] = useState([
-  //   {
-  //     id: 1,
-  //     functionName: "Security Check",
-  //     type: "Detect",
-  //     timeSlot: "18:00 - 06:00",
-  //     camerasAssigned: { camera: ["Camera 1", "Camera 2"] },
-  //     saveRecordings: false,
-  //     notify: false,
-  //     description: "Night-time security check to detect suspicious activity.",
-  //   },
-  //   {
-  //     id: 2,
-  //     functionName: "Patrol Monitoring",
-  //     type: "Track",
-  //     timeSlot: "06:00 - 12:00",
-  //     camerasAssigned: { camera: ["Camera 3"] },
-  //     saveRecordings: true,
-  //     notify: true,
-  //     description: "Monitor patrol routes during the morning shift.",
-  //   },
-  //   {
-  //     id: 3,
-  //     functionName: "Intruder Alert",
-  //     type: "Detect",
-  //     timeSlot: "12:00 - 18:00",
-  //     camerasAssigned: { camera: ["Camera 2", "Camera 4"] },
-  //     saveRecordings: true,
-  //     notify: false,
-  //     description: "Detect unauthorized intrusions in the afternoon.",
-  //   },
-  //   {
-  //     id: 4,
-  //     functionName: "Perimeter Security",
-  //     type: "Track",
-  //     timeSlot: "18:00 - 06:00",
-  //     camerasAssigned: { camera: ["Camera 1", "Camera 3"] },
-  //     saveRecordings: false,
-  //     notify: true,
-  //     description: "Track perimeter activity during the night shift.",
-  //   },
-  //   {
-  //     id: 5,
-  //     functionName: "Entry Surveillance",
-  //     type: "Detect",
-  //     timeSlot: "06:00 - 12:00",
-  //     camerasAssigned: { camera: ["Camera 4"] },
-  //     saveRecordings: true,
-  //     notify: false,
-  //     description: "Detect people in the morning.",
-  //   },
-  // ]);
   const { functions, loading, error, setFunctions, refetch } =
     useGetAllFunctions();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingFunction, setEditingFunction] = useState(null);
   const [fullScreenIndex, setFullScreenIndex] = useState(null);
-
-  const handleCardClick = (index) => {
-    setFullScreenIndex(fullScreenIndex === index ? null : index);
+  const { record } = useGetAllRecordings(fullScreenIndex);
+  console.log(record);
+  const handleCardClick = (id) => {
+    setFullScreenIndex(fullScreenIndex === id ? null : id);
   };
-
+  console.log(fullScreenIndex);
   const handleAdd = () => {
     setEditingFunction(null);
     setModalOpen(true);
@@ -172,7 +122,7 @@ const FunctionPage = () => {
         <Grid container spacing={5}>
           {functions.map(
             (func, index) =>
-              (fullScreenIndex === null || fullScreenIndex === index) && (
+              (fullScreenIndex === null || fullScreenIndex === func.id) && (
                 <Grid
                   item
                   xs={12}
@@ -191,8 +141,9 @@ const FunctionPage = () => {
                       display: "flex",
                       flexDirection: "column",
                       gap: 1,
-                      height: fullScreenIndex === index ? "90vh" : "auto",
-                      overflowY: fullScreenIndex === index ? "auto" : "visible",
+                      height: fullScreenIndex === func.id ? "90vh" : "auto",
+                      overflowY:
+                        fullScreenIndex === func.id ? "auto" : "visible",
                       backgroundColor: "#fff",
                     }}
                   >
@@ -207,9 +158,9 @@ const FunctionPage = () => {
                           "&:hover": { color: "#1257A0" },
                         }}
                         size="small"
-                        onClick={() => handleCardClick(index)}
+                        onClick={() => handleCardClick(func.id)}
                       >
-                        {fullScreenIndex === index ? (
+                        {fullScreenIndex === func.id ? (
                           <MdFullscreenExit />
                         ) : (
                           <MdFullscreen />
@@ -274,7 +225,7 @@ const FunctionPage = () => {
                       </Typography>
                     </Box>
                     <Divider />
-                    {fullScreenIndex === index && (
+                    {fullScreenIndex === func.id && (
                       <Box>
                         <Box>
                           <Typography variant="h6" fontWeight="bold" my={2}>
@@ -282,7 +233,7 @@ const FunctionPage = () => {
                           </Typography>
                         </Box>
                         <Grid container spacing={2}>
-                          {[1, 2, 3, 4].map((_, i) => (
+                          {record.map((data, i) => (
                             <Grid item xs={12} sm={6} md={4} key={i}>
                               <Card
                                 sx={{
@@ -304,18 +255,20 @@ const FunctionPage = () => {
                                     objectFit: "cover",
                                   }}
                                 /> */}
-                                     <img
-                                  src={`http://127.0.0.1:8000/api/v1/storage-operations/function-recordings/${func.id}`}
+                                <img
+                                  src={`http://127.0.0.1:8000/api/v1/storage-operations/function-recordings/${data.id}`}
                                   width="100%"
                                   height="100%"
                                   style={{
                                     objectFit: "cover",
                                   }}
                                   onError={(e) => {
-                                    console.warn(`Image failed to load: ${e.target.src}`);
+                                    console.warn(
+                                      `Image failed to load: ${e.target.src}`
+                                    );
                                     e.target.onerror = null; // Prevent infinite loop in case the fallback image also fails
                                     e.target.src = "/assets/Video dummy.png"; // ✅ Corrected path
-                                  }} 
+                                  }}
                                 />
                                 <Typography
                                   variant="subtitle2"
@@ -329,7 +282,7 @@ const FunctionPage = () => {
                                     borderRadius: "4px",
                                   }}
                                 >
-                                  {`Record ${index + 1}`}
+                                  {`Record ${i + 1}`}
                                 </Typography>
                                 <Typography
                                   variant="subtitle2"
@@ -343,13 +296,36 @@ const FunctionPage = () => {
                                     borderRadius: "4px",
                                   }}
                                 >
-                                  {`2025-03-15`}
+                                  {new Date(data.timestamp).toLocaleString(
+                                    "en-US",
+                                    {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "2-digit",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      // second: "2-digit",
+                                    }
+                                  )}
                                 </Typography>
                               </Card>
-                              <Box pl={1} mt={2}>
-                              <Typography variant="body2" fontWeight="500">
-                              {`Video ${index + 1}`}
-                              </Typography>
+                              <Box px={2} mt={2} gap={2}>
+                                <Typography variant="body2" fontWeight="500">
+                                  {`Video ${i + 1}`}
+                                </Typography>
+                                <Divider />
+                                <Box
+                                  display="flex"
+                                  justifyContent="space-between"
+                                  mt={2}
+                                >
+                                  <Typography variant="body2" fontWeight="500">
+                                    people Count
+                                  </Typography>
+                                  <Typography variant="body2">
+                                    {data.people_count}
+                                  </Typography>
+                                </Box>
                               </Box>
                             </Grid>
                           ))}
