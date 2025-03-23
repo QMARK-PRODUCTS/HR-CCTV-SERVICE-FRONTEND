@@ -15,7 +15,14 @@ import {
 import { toast } from "react-toastify";
 
 const availableCameras = ["camera 1", "camera 2"];
-const timeSlots = ["06:00 - 12:00", "12:00 - 18:00", "18:00 - 06:00"];
+const timeSlots = Array.from({ length: 12 }, (_, i) => {
+  const start = String(i * 2).padStart(2, "0") + ":00";
+  const end = String((i * 2 + 2) % 24).padStart(2, "0") + ":00";
+  return `${start} - ${end}`;
+});
+
+console.log(timeSlots);
+
 
 const FunctionModal = ({ open, onClose, onSave, initialData }) => {
   const [formData, setFormData] = useState({
