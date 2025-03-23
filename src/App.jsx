@@ -3,6 +3,8 @@ import Dashboard from "./components/dashboard/Dashboard";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import LoginPage from "./pages/LoginPage";
+import useWebSocket from "./hooks/useWebSocket";
+import { useEffect } from "react";
 // import ProtectedRoute from "./routes/ProtectedRoute";
 
 function PrivateRoute({ children }) {
@@ -13,6 +15,15 @@ function PrivateRoute({ children }) {
 function App() {
   const cameraMode = useSelector((state) => state.appSettings.cameraMode);
   const user = useSelector((state) => state.auth.user);
+const {connect ,disconnect,messages} = useWebSocket()
+useEffect(() => {
+  if (user) {
+    connect(); // Connect WebSocket when user logs in
+    console.log("here",messages)
+  } else {
+    disconnect(); // Disconnect WebSocket when user logs out
+  }
+}, [user]); // React when user state changes
   return (
     <Router>
     <Routes>

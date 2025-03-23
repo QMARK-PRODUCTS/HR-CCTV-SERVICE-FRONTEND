@@ -8,10 +8,33 @@ import { FaEye } from "react-icons/fa";
 import Avatar from "@mui/material/Avatar";
 import Hls from "hls.js";
 import { baseUrl } from "../../../utils/Endpoint";
+import useWebSocket from "../../../hooks/useWebSocket";
+import { toast } from "react-toastify";
+
 
 export default function CameraGrid({ cameras, castDetails }) {
   const videoRefs = useRef([]);
   const [fullScreenIndex, setFullScreenIndex] = useState(null);
+  const { messages } = useWebSocket();
+
+  useEffect(() => {
+    if (messages) {
+      const messageText = Array.isArray(messages)
+        ? messages.join(", ") // Join array messages into a string
+        : typeof messages === "object"
+        ? JSON.stringify(messages) // Convert objects to readable strings
+        : messages; // Use string directly
+  
+      if (messageText) {
+        toast.info(`New Message: ${messageText}`, {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+    }
+  }, [messages]);
+  
+
   // Dummy Cast Details
   // useEffect(() => {
   //   const hlsInstances = [];

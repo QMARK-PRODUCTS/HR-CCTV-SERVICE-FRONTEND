@@ -13,12 +13,16 @@ import SessionsChart from './SessionsChart';
 import StatCard from './StatCard';
 import UserCustomizedDataGrid from '../../Users/userCustomizedDataGrid';
 import useGetAllUsers from '../../../hooks/useGetAllUsers';
+import useGetAllRecordings from '../../../hooks/useGetAllRecordings';
+import useGetAllFunctions from '../../../hooks/useGetAllFunctions';
 
 export default function MainGrid() {
   const { users } = useGetAllUsers();
+  const {record} =useGetAllRecordings(1);
+  const {functions} = useGetAllFunctions()
 const data = [
   {
-    title: 'Users',
+    title: 'People',
     value: users.length.toString(),
     interval: 'Last 30 days',
     trend: 'up',
@@ -28,8 +32,8 @@ const data = [
     ],
   },
   {
-    title: 'Conversions',
-    value: '325',
+    title: 'Records',
+    value: record.length.toString(),
     interval: 'Last 30 days',
     trend: 'down',
     data: [
@@ -38,8 +42,8 @@ const data = [
     ],
   },
   {
-    title: 'Event count',
-    value: '200k',
+    title: 'Functions',
+    value: functions.length.toString(),
     interval: 'Last 30 days',
     trend: 'neutral',
     data: [
@@ -69,12 +73,12 @@ const data = [
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <HighlightedCard />
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        {/* <Grid size={{ xs: 12, md: 6 }}>
           <SessionsChart />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        </Grid> */}
+        {/* <Grid size={{ xs: 12, md: 6 }}>
           <PageViewsBarChart />
-        </Grid>
+        </Grid> */}
       </Grid>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
        People Details
@@ -86,7 +90,7 @@ const data = [
         <Grid size={{ xs: 12, lg: 3 }}>
           <Stack gap={2} direction={{ xs: 'column', sm: 'row', lg: 'column' }}>
             <CustomizedTreeView />
-            <ChartUserByCountry />
+            {/* <ChartUserByCountry /> */}
           </Stack>
         </Grid>
       </Grid>
