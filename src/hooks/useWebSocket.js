@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { webSockectBaseUrl } from "../utils/Endpoint";
 
 const useWebSocket = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(null);
   const [isConnected, setIsConnected] = useState(false); // Track connection state
   const socketRef = useRef(null);
 
@@ -19,7 +19,7 @@ const useWebSocket = () => {
         try {
           const messageData = JSON.parse(event.data);
           console.log("message from sockect",messageData)
-          setMessages((prevMessages) => [...prevMessages, messageData]);
+          setMessages(messageData);
         } catch (error) {
           console.error("Error parsing WebSocket message:", error);
         }

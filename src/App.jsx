@@ -24,6 +24,18 @@ useEffect(() => {
     disconnect(); // Disconnect WebSocket when user logs out
   }
 }, [user]); // React when user state changes
+
+
+useEffect(() => {
+  if (messages) {
+      toast.info(`New Message: ${messages?.message}`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    
+  }
+}, [messages]);
+
   return (
     <Router>
     <Routes>
