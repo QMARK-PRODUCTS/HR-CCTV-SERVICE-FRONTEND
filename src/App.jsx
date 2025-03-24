@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import useWebSocket from "./hooks/useWebSocket";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { FaExclamationTriangle } from "react-icons/fa";
 // import ProtectedRoute from "./routes/ProtectedRoute";
 
 function PrivateRoute({ children }) {
@@ -29,11 +30,16 @@ useEffect(() => {
 
 useEffect(() => {
   if (messages) {
-      toast.info(`New Message: ${messages?.message}`, {
+    toast.warn(
+      <span>
+        <strong>New Notification:</strong> {messages?.message}
+      </span>,
+      {
         position: "top-right",
         autoClose: 3000,
-      });
-    
+        icon: <FaExclamationTriangle className="text-yellow-500" />,
+      }
+    );
   }
 }, [messages]);
 
