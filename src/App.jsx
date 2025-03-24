@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import useWebSocket from "./hooks/useWebSocket";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { FaExclamationTriangle } from "react-icons/fa";
 // import ProtectedRoute from "./routes/ProtectedRoute";
 
 function PrivateRoute({ children }) {
