@@ -15,24 +15,17 @@ import { toast } from "react-toastify";
 export default function CameraGrid({ cameras, castDetails }) {
   const videoRefs = useRef([]);
   const [fullScreenIndex, setFullScreenIndex] = useState(null);
-  const { messages } = useWebSocket();
+  // const { messages } = useWebSocket();
 
-  useEffect(() => {
-    if (messages) {
-      const messageText = Array.isArray(messages)
-        ? messages.join(", ") // Join array messages into a string
-        : typeof messages === "object"
-        ? JSON.stringify(messages) // Convert objects to readable strings
-        : messages; // Use string directly
-  
-      if (messageText) {
-        toast.info(`New Message: ${messageText}`, {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      }
-    }
-  }, [messages]);
+  // useEffect(() => {
+  //   if (messages) {
+  //       toast.info(`New Message: ${messages?.message}`, {
+  //         position: "top-right",
+  //         autoClose: 3000,
+  //       });
+      
+  //   }
+  // }, [messages]);
   
 
   // Dummy Cast Details
