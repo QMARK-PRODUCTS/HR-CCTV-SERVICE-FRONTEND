@@ -29,11 +29,16 @@ useEffect(() => {
 
 useEffect(() => {
   if (messages) {
-      toast.info(`New Message: ${messages?.message}`, {
+    toast.warn(
+      <span>
+        <strong>New Notification:</strong> {messages?.message}
+      </span>,
+      {
         position: "top-right",
         autoClose: 3000,
-      });
-    
+        icon: <FaExclamationTriangle className="text-yellow-500" />,
+      }
+    );
   }
 }, [messages]);
 
